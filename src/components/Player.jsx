@@ -2,7 +2,7 @@ import React from 'react'
 
 function Player() {
   return (
-    <div>Player</div>
+    <div>Player Placeholder</div>
   )
 }
 
