@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import styled from "styled-components";
 
 function AudioUpload() {
+  if('REACT_APP_AM_I_IN_A_DOCKER_CONTAINER' in process.env){
+    console.log('It is set!');
+    console.log(process.env.AM_I_IN_A_DOCKER_CONTAINER);
+  } else {
+    console.log('No set!');
+    console.log(process.env.AM_I_IN_A_DOCKER_CONTAINER);
+  }
   const [uploadStatus, setUploadStatus] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -123,3 +130,4 @@ const DragDropArea = styled.div`
 `;
 
 export default AudioUpload;
+// https://stackoverflow.com/questions/30047205/how-can-i-check-if-an-environment-variable-is-set-in-node-js
