@@ -1,12 +1,15 @@
 import React from 'react'
 import SpeechObject from '../components/SpeechObject'
-import { Heading } from '@chakra-ui/react'
+import { Heading, HStack} from '@chakra-ui/react'
 
 function Library() {
   return (
     <div>
       <Heading size="md">Library</Heading>
-      <SpeechObject key ={"0123/foobar"} identifier={"TestIdentifier/0123/foobar"} />
+      <HStack spacing={8} w="100%">
+        <SpeechObject key ={"0123/foobar"} identifier={"TestIdentifier/0123/foo"} />
+        <SpeechObject key ={"4567/foobar"} identifier={"TestIdentifier/4567/bar"} />
+      </HStack>
     </div>
   )
 }

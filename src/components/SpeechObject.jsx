@@ -1,12 +1,13 @@
+import { Box, Text } from '@chakra-ui/react'
 import React from 'react'
 
 function SpeechObject({identifier}) {
   return (
-    <div>
-      <div>SpeechObject</div>
-      <div> Here could be more info</div>
-      <div>{identifier}</div>
-    </div>
+    <Box border="1px" rounded="lg" bg="pink.100">
+      <Text>SpeechObject</Text>
+      <Text> Here could be more info</Text>
+      <Text>{identifier}</Text>
+    </Box>
   )
 }
 
