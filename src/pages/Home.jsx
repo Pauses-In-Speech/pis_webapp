@@ -3,7 +3,7 @@ import Player from "../components/Player";
 
 import React from "react";
 
-function Home() {
+function Home({speechObject, onSpeechObjectSelect}) {
   // Placeholder speech object
   const placeholderSpeechObject = {
     id: "12345",
@@ -15,8 +15,8 @@ function Home() {
   };
   return (
     <div>
-      <AudioUpload />
-      <Player speechObject={placeholderSpeechObject} />
+      <AudioUpload onSpeechObjectSelect={onSpeechObjectSelect}/>
+      <Player speechObject={speechObject} />
     </div>
   )
 }

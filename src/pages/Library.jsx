@@ -2,7 +2,7 @@ import React from 'react'
 import SpeechObject from '../components/SpeechObject'
 import { Heading, HStack} from '@chakra-ui/react'
 
-function Library() {
+function Library({ onSpeechObjectSelect }) {
   return (
     <div>
       <Heading size="md">Library</Heading>

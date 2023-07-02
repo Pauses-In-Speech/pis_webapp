@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
 
-function AudioUpload() {
+function AudioUpload({ onSpeechObjectSelect }) {
   if('REACT_APP_AM_I_IN_A_DOCKER_CONTAINER' in process.env){
     console.log('It is set!');
-    console.log(process.env.AM_I_IN_A_DOCKER_CONTAINER);
+    console.log(process.env.REACT_APP_AM_I_IN_A_DOCKER_CONTAINER);
   } else {
     console.log('No set!');
-    console.log(process.env.AM_I_IN_A_DOCKER_CONTAINER);
+    console.log(process.env.REACT_APP_AM_I_IN_A_DOCKER_CONTAINER);
   }
   const [uploadStatus, setUploadStatus] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -39,7 +39,8 @@ function AudioUpload() {
         body: formData,
       });
       const data = await response.json();
-      setUploadStatus(`File uploaded at: ${data.file_save_location}`);
+      setUploadStatus(`File uploaded at: ${data.audio_id}`);
+      onSpeechObjectSelect(data.audio_id);
     } catch (error) {
       setUploadStatus('Upload failed');
     }
