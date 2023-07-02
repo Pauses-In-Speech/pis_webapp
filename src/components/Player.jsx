@@ -113,7 +113,6 @@ function Player({ speechObject }) {
           </Text>
           <Box style={{ marginTop: 'auto' }} m={4}>
             <audio style={{ width: '100%' }} controls>
-              {/* TODO: change audio object */}
               <source src={audioData} type="audio/mpeg"></source>
             </audio>
           </Box>
