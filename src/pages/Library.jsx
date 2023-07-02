@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import SpeechObject from '../components/SpeechObject'
-import { Heading, HStack } from '@chakra-ui/react'
+import { Heading, HStack, Box } from '@chakra-ui/react'
 
 function Library({ onSpeechObjectSelect }) {
   const [audioObjects, setAudioObjects] = useState([]);
@@ -12,7 +12,7 @@ function Library({ onSpeechObjectSelect }) {
       .catch(error => console.error(error));
   }, []);
   return (
-    <div>
+    <Box m={4}>
       <Heading size="md">Library</Heading>
       <HStack spacing={8} w="100%">
         {audioObjects.map(audioObject => (
@@ -23,7 +23,7 @@ function Library({ onSpeechObjectSelect }) {
           />
         ))}
       </HStack>
-    </div>
+    </Box>
   )
 }
 

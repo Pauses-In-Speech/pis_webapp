@@ -1,5 +1,6 @@
 import AudioUpload from "../components/AudioUpload";
 import Player from "../components/Player";
+import Statistics from "../components/Statistics";
 
 import React from "react";
 
@@ -17,6 +18,7 @@ function Home({speechObject, onSpeechObjectSelect}) {
     <div>
       <AudioUpload onSpeechObjectSelect={onSpeechObjectSelect}/>
       <Player speechObject={speechObject} />
+      <Statistics speechObjec={speechObject} />
     </div>
   )
 }
