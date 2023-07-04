@@ -89,9 +89,9 @@ function AudioUpload({ onSpeechObjectSelect }) {
 
   return (
     <Flex m={4} gap={4}>
-      <Box minH={14} rounded="lg" bg="pink.100" width="50%" borderRadius={15}>
-        <Heading size="sm" p={4}>Audio</Heading>
-        <Box border="1px dashed #ccc" bg="pink.100" p={4}
+      <Box minH={14} rounded="lg" bg="pink.100" width="50%" borderRadius={15} border="1px">
+        <Heading size="md" p={4}>Audio</Heading>
+        <Box bg="pink.100" p={4}
           onDrop={handleAudioFileDrop}
           onDragOver={handleDragOver}
           _hover={{ bg: "purple.200" }}

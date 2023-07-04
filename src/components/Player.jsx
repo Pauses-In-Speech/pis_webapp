@@ -130,7 +130,7 @@ function Player({ speechObject }) {
   return (
     <Box p={4}>
       <Box border="1px" rounded="lg" bg="pink.100">
-        <Heading ml={4} size="md">
+        <Heading m={4} size="md">
           Player
         </Heading>
         <Flex direction="column">
