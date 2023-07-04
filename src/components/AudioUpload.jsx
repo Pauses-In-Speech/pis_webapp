@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
+import { Box, Text, Button, Heading, Stack, Flex, Input } from '@chakra-ui/react';
 
 function AudioUpload({ onSpeechObjectSelect }) {
   if('REACT_APP_AM_I_IN_A_DOCKER_CONTAINER' in process.env){
@@ -9,29 +10,42 @@ function AudioUpload({ onSpeechObjectSelect }) {
     console.log('No set!');
     console.log(process.env.REACT_APP_AM_I_IN_A_DOCKER_CONTAINER);
   }
-  const [uploadStatus, setUploadStatus] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [audioUploadStatus, setAudioUploadStatus] = useState('');
+  const [transcriptUploadStatus, setTranscriptUploadStatus] = useState('');
+  const [selectedAudioFile, setSelectedAudioFile] = useState(null);
+  const [selectedTranscriptFile, setSelectedTranscriptFile] = useState(null);
 
-  const handleFileSelect = (e) => {
+  const handleAudioFileSelect = (e) => {
     const file = e.target.files[0];
-    setSelectedFile(file);
+    setSelectedAudioFile(file);
   };
 
-  const handleFileDrop = (e) => {
+  const handleTranscriptFileSelect = (e) => {
+    const file = e.target.files[0];
+    setSelectedTranscriptFile(file);
+  };
+
+  const handleAudioFileDrop = (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    setSelectedFile(file);
+    setSelectedAudioFile(file);
   };
 
-  const handleFileUpload = async () => {
-    if (!selectedFile) {
-      setUploadStatus('No file selected');
+  const handleTranscriptFileDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    setSelectedTranscriptFile(file);
+  };
+
+  const handleAudioFileUpload = async () => {
+    if (!selectedAudioFile) {
+      setAudioUploadStatus('No file selected');
       return;
     }
 
-    setUploadStatus('Uploading...');
+    setAudioUploadStatus('Uploading...');
     const formData = new FormData();
-    formData.append('file', selectedFile);
+    formData.append('file', selectedAudioFile);
 
     try {
       const response = await fetch('http://0.0.0.0:8000/audio', {
@@ -39,10 +53,33 @@ function AudioUpload({ onSpeechObjectSelect }) {
         body: formData,
       });
       const data = await response.json();
-      setUploadStatus(`File uploaded at: ${data.audio_id}`);
+      setAudioUploadStatus(`File uploaded at: ${data.audio_id}`);
       onSpeechObjectSelect(data.audio_id);
     } catch (error) {
-      setUploadStatus('Upload failed');
+      setAudioUploadStatus('Upload failed');
+    }
+  };
+
+  const handleTranscriptFileUpload = async () => {
+    if (!selectedTranscriptFile) {
+      setTranscriptUploadStatus('No file selected');
+      return;
+    }
+
+    setTranscriptUploadStatus('Uploading...');
+    const formData = new FormData();
+    formData.append('file', selectedTranscriptFile);
+
+    try {
+      const response = await fetch('http://0.0.0.0:8000/audio', { // change the upload link
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      setTranscriptUploadStatus(`File uploaded at: ${data.audio_id}`);
+      onSpeechObjectSelect(data.audio_id); // TODO: remove this line
+    } catch (error) {
+      setTranscriptUploadStatus('Upload failed');
     }
   };
 
@@ -51,25 +88,20 @@ function AudioUpload({ onSpeechObjectSelect }) {
   };
 
   return (
-    <Wrapper>
-      <Card>
-        <p
-          style={{ padding: '0rem 1rem' }}
-        >
-          Audio
-        </p>
-        <DragDropArea
-          onDrop={handleFileDrop}
+    <Flex m={4} gap={4}>
+      <Box minH={14} rounded="lg" bg="pink.100" width="50%" borderRadius={15}>
+        <Heading size="sm" p={4}>Audio</Heading>
+        <Box border="1px dashed #ccc" bg="pink.100" p={4}
+          onDrop={handleAudioFileDrop}
           onDragOver={handleDragOver}
+          _hover={{ bg: "purple.200" }}
         >
-          {selectedFile ? <p>Selected file: {selectedFile.name}</p> : <p>Drag and drop a MP3 or WAV file here, or</p>}
-          <input type="file" accept=".mp3,.wav" onChange={handleFileSelect} />
-        </DragDropArea>
-        <div>
-          <button onClick={handleFileUpload}>Upload</button>
-        </div>
-        {uploadStatus && <div>{uploadStatus}</div>}
-      </Card>
+          {selectedAudioFile ? <Text ml={4}>Selected file: {selectedAudioFile.name}</Text> : <Text>Drag and drop a MP3 or WAV file here, or</Text>}
+          <Input type="file" accept=".mp3,.wav" onChange={handleAudioFileSelect} />
+        </Box>
+        <Button m={4} onClick={handleAudioFileUpload}>Upload</Button>
+        {audioUploadStatus && <Text>{audioUploadStatus}</Text>}
+      </Box>
 
       <Card>
         {/* TODO: add transcript file upload handling */}
@@ -79,18 +111,18 @@ function AudioUpload({ onSpeechObjectSelect }) {
           Transcript
         </p>
         <DragDropArea
-          onDrop={handleFileDrop}
+          onDrop={handleTranscriptFileDrop}
           onDragOver={handleDragOver}
         >
-          {selectedFile ? <p>Selected file: {selectedFile.name}</p> : <p>Drag and drop a .txt file here, or</p>}
-          <input type="file" accept=".txt" onChange={handleFileSelect} />
+          {selectedTranscriptFile ? <p>Selected file: {selectedTranscriptFile.name}</p> : <p>Drag and drop a .txt file here, or</p>}
+          <input type="file" accept=".txt" onChange={handleTranscriptFileSelect} />
         </DragDropArea>
         <div>
-          <button onClick={handleFileUpload}>Upload</button>
+          <button onClick={handleTranscriptFileUpload}>Upload</button>
         </div>
-        {uploadStatus && <div>{uploadStatus}</div>}
+        {transcriptUploadStatus && <div>{transcriptUploadStatus}</div>}
       </Card>
-    </Wrapper>
+    </Flex>
   );
 };
 

@@ -1,6 +1,5 @@
 import { AspectRatio, Box, Flex, Heading, Image, Text } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
-import AudioUpload from './AudioUpload';
 
 async function fetchSpeechObjectData(speechObject) {
   try {
@@ -26,15 +25,28 @@ async function fetchSpeechObjectAudioData(speechObject) {
   }
 }
 
-async function fetchPauseImage(speechObject) {
+async function fetchPauseImage(speechObject, width=720, height=80) {
+
   try {
-    const response = await fetch(`http://0.0.0.0:8000/speech/pause_image/${speechObject}`);
-    const imageData = await response.blob();
-    console.log(imageData);
-    return imageData;
+    const response = await fetch(`http://0.0.0.0:8000/speech/pause_image/${speechObject}?width=${width}&height=${height}`);
+    const pauseImageData = await response.blob();
+    console.log(pauseImageData);
+    return pauseImageData;
   } catch (error) {
     console.error(error);
     throw new Error("Can't download pause image png.");
+  }
+}
+
+async function fetchAuditokImage(speechObject, width=720, height=80) {
+  try {
+    const response = await fetch(`http://0.0.0.0:8000/speech/auditok_image/${speechObject}?width=${width}&height=${height}`);
+    const auditokImageData = await response.blob();
+    console.log(auditokImageData);
+    return auditokImageData;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Can't download Auditok image png.");
   }
 }
 
@@ -43,7 +55,9 @@ async function fetchPauseImage(speechObject) {
 function Player({ speechObject }) {
   const [data, setData] = useState(null);
   const [audioData, setAudioData] = useState(null);
-  const [imageData, setImageData] = useState(null);
+  const [pauseImageData, setPauseImageData] = useState(null);
+  const [auditokImageData, setAuditokImageData] = useState(null);
+  const playerWidth = Math.floor(window.innerWidth * 1.0);
 
   useEffect(() => {
     if (speechObject) {
@@ -69,33 +83,48 @@ function Player({ speechObject }) {
         });
 
       // Download pause image
-      fetchPauseImage(speechObject)
+      fetchPauseImage(speechObject, playerWidth, 160)
         .then((responseData) => {
           const imageUrl = URL.createObjectURL(responseData);
-          setImageData(imageUrl);
+          setPauseImageData(imageUrl);
         })
         .catch((error) => {
           console.error(error);
-          setImageData(null);
+          setPauseImageData(null);
+        });
+
+      // Download auditok image
+      fetchAuditokImage(speechObject, playerWidth, 160)
+        .then((responseData) => {
+          const imageUrl = URL.createObjectURL(responseData);
+          setAuditokImageData(imageUrl);
+        })
+        .catch((error) => {
+          console.error(error);
+          setAuditokImageData(null);
         });
     }
   }, [speechObject]);
 
 
   if (!speechObject) {
-    return <div>No speechObject selected</div>;
+    return <Box m={4}>No speechObject selected</Box>;
   }
 
   if (!data) {
-    return <div>Fetching...</div>;
+    return <Box m={4}>Fetching...</Box>;
   }
 
   if (!audioData) {
-    return <div>Downloading...</div>
+    return <Box m={4}>Downloading...</Box>
   }
 
-  if (!imageData) {
-    return <div>Generating pause image...</div>
+  if (!auditokImageData) {
+    return <Box m={4}>Generating Auditok image...</Box>
+  }
+
+  if (!pauseImageData) {
+    return <Box m={4}>Generating pause image...</Box>
   }
 
   return (
@@ -116,14 +145,23 @@ function Player({ speechObject }) {
               <source src={audioData} type="audio/mpeg"></source>
             </audio>
           </Box>
-          <Box m={4}>
-            <AspectRatio maxW="100%" ratio={4 / 1} >
+          <Box m={4} ml="65px" mr="210px">
+            {/* <AspectRatio maxW="100%" ratio={4 / 1} > */}
               <Image
-                boxSize="100%"
-                src={imageData}
-                alt="Sound files"
+                // boxSize="100%"
+                src={pauseImageData}
+                alt="Image displaying pauses."
               />
-            </AspectRatio>
+            {/* </AspectRatio> */}
+          </Box>
+          <Box m={4} ml="65px" mr="210px">
+            {/* <AspectRatio maxW="100%" ratio={4 / 1} > */}
+              <Image
+                // boxSize="100%"
+                src={auditokImageData}
+                alt="Image displaying Auditok sound visualization."
+              />
+            {/* </AspectRatio> */}
           </Box>
         </Flex>
       </Box >
