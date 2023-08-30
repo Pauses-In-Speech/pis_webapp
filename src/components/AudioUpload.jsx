@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styled from "styled-components";
 import { Box, Text, Button, Heading, Stack, Flex, Input } from '@chakra-ui/react';
 
 function AudioUpload({ onSpeechObjectSelect }) {
@@ -96,71 +95,30 @@ function AudioUpload({ onSpeechObjectSelect }) {
           onDragOver={handleDragOver}
           _hover={{ bg: "purple.200" }}
         >
-          {selectedAudioFile ? <Text ml={4}>Selected file: {selectedAudioFile.name}</Text> : <Text>Drag and drop a MP3 or WAV file here, or</Text>}
+          {selectedAudioFile ? <Text>Selected file: {selectedAudioFile.name}</Text> : <Text>Drag and drop a MP3 or WAV file here, or</Text>}
           <Input type="file" accept=".mp3,.wav" onChange={handleAudioFileSelect} />
         </Box>
         <Button m={4} onClick={handleAudioFileUpload}>Upload</Button>
-        {audioUploadStatus && <Text>{audioUploadStatus}</Text>}
+        {audioUploadStatus && <Text m={4}>{audioUploadStatus}</Text>}
       </Box>
 
-      <Card>
+      <Box minH={14} rounded="lg" bg="pink.100" width="50%" borderRadius={15} border="1px">
         {/* TODO: add transcript file upload handling */}
-        <p
-          style={{ padding: '0rem 1rem' }}
-        >
-          Transcript
-        </p>
-        <DragDropArea
+        <Heading size="md" p={4}>Transcript</Heading>
+        <Box bg="pink.100" p={4}
           onDrop={handleTranscriptFileDrop}
           onDragOver={handleDragOver}
+          _hover={{ bg: "purple.200" }}
         >
-          {selectedTranscriptFile ? <p>Selected file: {selectedTranscriptFile.name}</p> : <p>Drag and drop a .txt file here, or</p>}
-          <input type="file" accept=".txt" onChange={handleTranscriptFileSelect} />
-        </DragDropArea>
-        <div>
-          <button onClick={handleTranscriptFileUpload}>Upload</button>
-        </div>
-        {transcriptUploadStatus && <div>{transcriptUploadStatus}</div>}
-      </Card>
+          {selectedTranscriptFile ? <Text>Selected file: {selectedTranscriptFile.name}</Text> : <Text>Drag and drop a .txt file here, or</Text>}
+          <Input type="file" accept=".txt" onChange={handleTranscriptFileSelect} />
+        </Box>
+        <Button m={4} onClick={handleTranscriptFileUpload}>Upload</Button>
+        {transcriptUploadStatus && <Text>{transcriptUploadStatus}</Text>}
+      </Box>
     </Flex>
   );
 };
-
-const Wrapper = styled.div`
-  margin: 4rem 1rem;
-  flex-direction: row;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-`
-
-const Card = styled.div`
-  min-height: 14rem;
-  border-radius: 2rem;
-  overflow: hidden;
-  background: gray;
-  width: 50%;
-
-  button {
-    color: #BF4F74;
-    font-size: 1em;
-    margin: 0.5em;
-    padding: 0.25em 1em;
-    border: 2px solid #BF4F74;
-    border-radius: 3px;
-  }
-`
-
-const DragDropArea = styled.div`
-  border: 1px dashed #ccc;
-  padding: 0.5rem;
-  margin-top: 1rem;
-  background: gray;
-
-  &:hover {
-    background: lightgray;
-  }
-`;
 
 export default AudioUpload;
 // https://stackoverflow.com/questions/30047205/how-can-i-check-if-an-environment-variable-is-set-in-node-js

@@ -1,5 +1,9 @@
-import { AspectRatio, Box, Flex, Heading, Image, Text } from '@chakra-ui/react';
-import React, { useState, useEffect } from 'react';
+import { AspectRatio, Box, Flex, Heading, Image, Text, Button } from '@chakra-ui/react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import WaveSurfer from 'wavesurfer.js';
+import Regions from 'wavesurfer.js/plugins/regions'
+import Timeline from 'wavesurfer.js/plugins/timeline'
+
 
 async function fetchSpeechObjectData(speechObject) {
   try {
@@ -50,6 +54,74 @@ async function fetchAuditokImage(speechObject, width=720, height=80) {
   }
 }
 
+// WaveSurfer hook
+const useWavesurfer = (containerRef, options) => {
+  const [wavesurfer, setWavesurfer] = useState(null)
+
+  // Initialize wavesurfer when the container mounts
+  // or any of the props change
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    const ws = WaveSurfer.create({
+      ...options,
+      container: containerRef.current,
+    })
+
+    setWavesurfer(ws)
+
+    return () => {
+      ws.destroy()
+    }
+  }, [options, containerRef])
+
+  return wavesurfer
+}
+
+// Create a React component that will render wavesurfer.
+// Props are wavesurfer options.
+const WaveSurferPlayer = (props) => {
+  const containerRef = useRef()
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const wavesurfer = useWavesurfer(containerRef, props)
+
+  // On play button click
+  const onPlayClick = useCallback(() => {
+    wavesurfer.isPlaying() ? wavesurfer.pause() : wavesurfer.play()
+  }, [wavesurfer])
+
+  // Initialize wavesurfer when the container mounts
+  // or any of the props change
+  useEffect(() => {
+    if (!wavesurfer) return
+
+    setCurrentTime(0)
+    setIsPlaying(false)
+
+    const subscriptions = [
+      wavesurfer.on('play', () => setIsPlaying(true)),
+      wavesurfer.on('pause', () => setIsPlaying(false)),
+      wavesurfer.on('timeupdate', (currentTime) => setCurrentTime(currentTime)),
+    ]
+
+    return () => {
+      subscriptions.forEach((unsub) => unsub())
+    }
+  }, [wavesurfer])
+
+  return (
+    <>
+      <div ref={containerRef} style={{ minHeight: '120px' }} />
+
+      <Button onClick={onPlayClick} marginY={4}>
+        {isPlaying ? 'Pause' : 'Play'}
+      </Button>
+
+      <p>Seconds played: {currentTime}</p>
+    </>
+  )
+}
 
 
 function Player({ speechObject }) {
@@ -141,9 +213,21 @@ function Player({ speechObject }) {
             {`${data.upload_date.day}/${data.upload_date.month}/${data.upload_date.year}`}
           </Text>
           <Box style={{ marginTop: 'auto' }} m={4}>
-            <audio style={{ width: '100%' }} controls>
+            <WaveSurferPlayer
+              height={100}
+              waveColor="#5E5C64"
+              progressColor="rgb(255, 136, 0)"
+              url={audioData}
+              plugins={[Timeline.create()]}
+              normalize="true"
+              barWidth={2}
+              barGap={1}
+              barRadius={2}
+              minPxPerSec={10}
+            />
+            {/* <audio style={{ width: '100%' }} controls>
               <source src={audioData} type="audio/mpeg"></source>
-            </audio>
+            </audio> */}
           </Box>
           <Box m={4} ml="65px" mr="210px">
             {/* <AspectRatio maxW="100%" ratio={4 / 1} > */}

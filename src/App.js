@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 function App() {
   useEffect(() => {
     document.title = "PIS App"
+    // document.body.style = "background: #222222;"
+    // document.body.style = "background: #333333;"
     // TODO: Set a tab icon to a href like "favicon.ico"
   }, []);
   return (
