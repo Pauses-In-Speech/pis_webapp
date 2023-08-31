@@ -13,7 +13,7 @@ function Library({ onSpeechObjectSelect }) {
   }, []);
   return (
     <Box m={4}>
-      <Heading size="md">Library</Heading>
+      <Heading p={4} size="md">Library</Heading>
       <HStack spacing={8} w="100%">
         {audioObjects.map(audioObject => (
           <SpeechObject

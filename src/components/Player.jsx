@@ -1,7 +1,8 @@
-import { AspectRatio, Box, Flex, Heading, Image, Text, Button } from '@chakra-ui/react';
+import { Box, Flex, Heading, Image, Text, Button } from '@chakra-ui/react';
+import { useColorMode } from '@chakra-ui/color-mode'
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import WaveSurfer from 'wavesurfer.js';
-import Regions from 'wavesurfer.js/plugins/regions'
+import RegionsPlugin from 'wavesurfer.js/plugins/regions'
 import Timeline from 'wavesurfer.js/plugins/timeline'
 
 
@@ -29,7 +30,7 @@ async function fetchSpeechObjectAudioData(speechObject) {
   }
 }
 
-async function fetchPauseImage(speechObject, width=720, height=80) {
+async function fetchPauseImage(speechObject, width = 720, height = 80) {
 
   try {
     const response = await fetch(`http://0.0.0.0:8000/speech/pause_image/${speechObject}?width=${width}&height=${height}`);
@@ -42,7 +43,7 @@ async function fetchPauseImage(speechObject, width=720, height=80) {
   }
 }
 
-async function fetchAuditokImage(speechObject, width=720, height=80) {
+async function fetchAuditokImage(speechObject, width = 720, height = 80) {
   try {
     const response = await fetch(`http://0.0.0.0:8000/speech/auditok_image/${speechObject}?width=${width}&height=${height}`);
     const auditokImageData = await response.blob();
@@ -54,9 +55,13 @@ async function fetchAuditokImage(speechObject, width=720, height=80) {
   }
 }
 
+
 // WaveSurfer hook
 const useWavesurfer = (containerRef, options) => {
   const [wavesurfer, setWavesurfer] = useState(null)
+  
+  const [wsRegions, setWsRegions] = useState(null)
+  
 
   // Initialize wavesurfer when the container mounts
   // or any of the props change
@@ -68,14 +73,32 @@ const useWavesurfer = (containerRef, options) => {
       container: containerRef.current,
     })
 
+    // Initialize the Regions plugin
+    const wsr = ws.registerPlugin(RegionsPlugin.create())
+    setWsRegions(wsr)
+
     setWavesurfer(ws)
 
     return () => {
+      wsr.destroy()
       ws.destroy()
     }
   }, [options, containerRef])
 
-  return wavesurfer
+  // useEffect(() => {
+  //   if (!containerRef.current) return
+
+  //   const wsr = ws.registerPlugin(RegionsPlugin.create())
+
+  //   setWsRegions(wsr)
+
+  //   return () => {
+  //     wsr.destroy()
+  //   }
+
+  // }, [options, containerRef])
+
+  return [wavesurfer, wsRegions]
 }
 
 // Create a React component that will render wavesurfer.
@@ -84,7 +107,7 @@ const WaveSurferPlayer = (props) => {
   const containerRef = useRef()
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
-  const wavesurfer = useWavesurfer(containerRef, props)
+  const [wavesurfer, wsRegions] = useWavesurfer(containerRef, props)
 
   // On play button click
   const onPlayClick = useCallback(() => {
@@ -104,6 +127,23 @@ const WaveSurferPlayer = (props) => {
       wavesurfer.on('pause', () => setIsPlaying(false)),
       wavesurfer.on('timeupdate', (currentTime) => setCurrentTime(currentTime)),
     ]
+
+    // create regions for all pauses
+    console.log(props.pauseData.silences)
+    props.pauseData.silences.forEach(element => {
+      subscriptions.push(
+        wavesurfer.on('decode', () => {
+          // Regions
+          wsRegions.addRegion({
+            start: element.start,
+            end: element.end,
+            color: "rgba(70, 233, 30, 0.5)",
+            drag: false,
+            resize: false,
+          })
+        })
+      )
+    });
 
     return () => {
       subscriptions.forEach((unsub) => unsub())
@@ -125,6 +165,7 @@ const WaveSurferPlayer = (props) => {
 
 
 function Player({ speechObject }) {
+  const { colorMode, toggleColorMode } = useColorMode();
   const [data, setData] = useState(null);
   const [audioData, setAudioData] = useState(null);
   const [pauseImageData, setPauseImageData] = useState(null);
@@ -154,27 +195,27 @@ function Player({ speechObject }) {
           setAudioData(null);
         });
 
-      // Download pause image
-      fetchPauseImage(speechObject, playerWidth, 160)
-        .then((responseData) => {
-          const imageUrl = URL.createObjectURL(responseData);
-          setPauseImageData(imageUrl);
-        })
-        .catch((error) => {
-          console.error(error);
-          setPauseImageData(null);
-        });
+      // // Download pause image
+      // fetchPauseImage(speechObject, playerWidth, 160)
+      //   .then((responseData) => {
+      //     const imageUrl = URL.createObjectURL(responseData);
+      //     setPauseImageData(imageUrl);
+      //   })
+      //   .catch((error) => {
+      //     console.error(error);
+      //     setPauseImageData(null);
+      //   });
 
-      // Download auditok image
-      fetchAuditokImage(speechObject, playerWidth, 160)
-        .then((responseData) => {
-          const imageUrl = URL.createObjectURL(responseData);
-          setAuditokImageData(imageUrl);
-        })
-        .catch((error) => {
-          console.error(error);
-          setAuditokImageData(null);
-        });
+      // // Download auditok image
+      // fetchAuditokImage(speechObject, playerWidth, 160)
+      //   .then((responseData) => {
+      //     const imageUrl = URL.createObjectURL(responseData);
+      //     setAuditokImageData(imageUrl);
+      //   })
+      //   .catch((error) => {
+      //     console.error(error);
+      //     setAuditokImageData(null);
+      //   });
     }
   }, [speechObject]);
 
@@ -191,18 +232,18 @@ function Player({ speechObject }) {
     return <Box m={4}>Downloading...</Box>
   }
 
-  if (!auditokImageData) {
-    return <Box m={4}>Generating Auditok image...</Box>
-  }
+  // if (!auditokImageData) {
+  //   return <Box m={4}>Generating Auditok image...</Box>
+  // }
 
-  if (!pauseImageData) {
-    return <Box m={4}>Generating pause image...</Box>
-  }
+  // if (!pauseImageData) {
+  //   return <Box m={4}>Generating pause image...</Box>
+  // }
 
   return (
     <Box p={4}>
-      <Box border="1px" rounded="lg" bg="pink.100">
-        <Heading m={4} size="md">
+      <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"}>
+        <Heading p={4} size="md">
           Player
         </Heading>
         <Flex direction="column">
@@ -214,6 +255,7 @@ function Player({ speechObject }) {
           </Text>
           <Box style={{ marginTop: 'auto' }} m={4}>
             <WaveSurferPlayer
+              pauseData={data}
               height={100}
               waveColor="#5E5C64"
               progressColor="rgb(255, 136, 0)"
@@ -222,31 +264,24 @@ function Player({ speechObject }) {
               normalize="true"
               barWidth={2}
               barGap={1}
-              barRadius={2}
+              barRadius={4}
               minPxPerSec={10}
             />
-            {/* <audio style={{ width: '100%' }} controls>
-              <source src={audioData} type="audio/mpeg"></source>
-            </audio> */}
+          </Box>
+          {/* <Box m={4} ml="65px" mr="210px">
+            <Image
+              // boxSize="100%"
+              src={pauseImageData}
+              alt="Image displaying pauses."
+            />
           </Box>
           <Box m={4} ml="65px" mr="210px">
-            {/* <AspectRatio maxW="100%" ratio={4 / 1} > */}
-              <Image
-                // boxSize="100%"
-                src={pauseImageData}
-                alt="Image displaying pauses."
-              />
-            {/* </AspectRatio> */}
-          </Box>
-          <Box m={4} ml="65px" mr="210px">
-            {/* <AspectRatio maxW="100%" ratio={4 / 1} > */}
-              <Image
-                // boxSize="100%"
-                src={auditokImageData}
-                alt="Image displaying Auditok sound visualization."
-              />
-            {/* </AspectRatio> */}
-          </Box>
+            <Image
+              // boxSize="100%"
+              src={auditokImageData}
+              alt="Image displaying Auditok sound visualization."
+            />
+          </Box> */}
         </Flex>
       </Box >
     </Box >

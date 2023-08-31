@@ -1,10 +1,12 @@
 import React from 'react'
 import { Heading, Box, Flex, TableContainer, Text, Table, TableCaption, Tr, Th, Tbody, Thead, Td } from '@chakra-ui/react'
+import { useColorMode } from '@chakra-ui/color-mode'
 
 function Statistics() {
+  const { colorMode, toggleColorMode } = useColorMode();
   return (
     <Flex m={4} gap={4}>
-      <Box p={4} minH={28} rounded="lg" bg="pink.100" border="1px" w="50%">
+      <Box p={4} minH={28} rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} border="0px" w="50%">
         <Heading size="md">Statistics</Heading>
         {/* <Text>WPM: 73</Text>
         <Text>Pauses total: 5</Text>
@@ -35,7 +37,7 @@ function Statistics() {
           </Table>
         </TableContainer>
       </Box>
-      <Box p={4} minH={28} rounded="lg" bg="pink.100" border="1px" w="50%">
+      <Box p={4} minH={28} rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} border="0px" w="50%">
         <Heading size="md">Placeholder</Heading>
         <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam 
           nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, 

@@ -1,9 +1,12 @@
 import { Box, Text, Button, Heading, Stack } from '@chakra-ui/react';
+import { useColorMode } from '@chakra-ui/color-mode'
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function SpeechObject({ identifier, onSpeechObjectSelect }) {
   const navigate = useNavigate();
+
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const [speechData, setSpeechData] = useState(null);
   
@@ -42,11 +45,11 @@ function SpeechObject({ identifier, onSpeechObjectSelect }) {
   };
 
   return (
-    <Box border="1px" rounded="lg" bg="pink.100" maxW="20%" p={4}>
+    <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} maxW="20%" p={4}>
       <Heading size="sm">{identifier}</Heading>
-      <Text>{transcription.text.slice(0, 160)}...</Text>
-      <Text fontStyle="italic">{`${upload_date.day}/${upload_date.month}/${upload_date.year}`}</Text>
-      <Stack spacing={4} direction="row" align="center">
+      <Text pt={2}>{transcription.text.slice(0, 160)}...</Text>
+      <Text pt={1} fontStyle="italic">{`${upload_date.day}/${upload_date.month}/${upload_date.year}`}</Text>
+      <Stack pt={4} spacing={4} direction="row" align="center">
       <Button onClick={() => handleSelect(identifier)}>Select</Button>
       <Button onClick={() => handleSpeechObjectDelete(identifier)}>Delete</Button>
       </Stack>
