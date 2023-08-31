@@ -1,8 +1,10 @@
 import { ChakraProvider } from '@chakra-ui/react'
+import { ColorModeScript } from '@chakra-ui/color-mode';
 import { BrowserRouter } from "react-router-dom";
 import Pages from './pages/Pages';
 import Header from './components/Header';
 import { useEffect } from 'react';
+import theme from "./theme"
 
 function App() {
   useEffect(() => {
@@ -12,7 +14,8 @@ function App() {
     // TODO: Set a tab icon to a href like "favicon.ico"
   }, []);
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
       <BrowserRouter>
         <div className="App">
           <Header />

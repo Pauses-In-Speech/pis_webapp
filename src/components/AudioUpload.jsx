@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { Box, Text, Button, Heading, Stack, Flex, Input } from '@chakra-ui/react';
+import React, { useRef, useState } from 'react';
+import { Box, Text, Button, Heading, Flex, Input } from '@chakra-ui/react';
+import { useColorMode } from '@chakra-ui/color-mode'
 
 function AudioUpload({ onSpeechObjectSelect }) {
-  if('REACT_APP_AM_I_IN_A_DOCKER_CONTAINER' in process.env){
+  if ('REACT_APP_AM_I_IN_A_DOCKER_CONTAINER' in process.env) {
     console.log('It is set!');
     console.log(process.env.REACT_APP_AM_I_IN_A_DOCKER_CONTAINER);
   } else {
@@ -13,6 +14,10 @@ function AudioUpload({ onSpeechObjectSelect }) {
   const [transcriptUploadStatus, setTranscriptUploadStatus] = useState('');
   const [selectedAudioFile, setSelectedAudioFile] = useState(null);
   const [selectedTranscriptFile, setSelectedTranscriptFile] = useState(null);
+
+  const audioInputRef = useRef();
+  const transcriptInputRef = useRef();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const handleAudioFileSelect = (e) => {
     const file = e.target.files[0];
@@ -88,30 +93,46 @@ function AudioUpload({ onSpeechObjectSelect }) {
 
   return (
     <Flex m={4} gap={4}>
-      <Box minH={14} rounded="lg" bg="pink.100" width="50%" borderRadius={15} border="1px">
+      <Box minH={14} rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} width="50%" borderRadius={15} border="0px">
         <Heading size="md" p={4}>Audio</Heading>
-        <Box bg="pink.100" p={4}
+        <Box p={4}
           onDrop={handleAudioFileDrop}
           onDragOver={handleDragOver}
-          _hover={{ bg: "purple.200" }}
+          onClick={() => audioInputRef.current.click()}
+          _hover={{ bg: "whiteAlpha.300" }}
         >
-          {selectedAudioFile ? <Text>Selected file: {selectedAudioFile.name}</Text> : <Text>Drag and drop a MP3 or WAV file here, or</Text>}
-          <Input type="file" accept=".mp3,.wav" onChange={handleAudioFileSelect} />
+          {selectedAudioFile ? <Text>Selected file: {selectedAudioFile.name}</Text> : <Text>Drag and drop a MP3 or WAV file here</Text>}
+          <Input
+            type="file"
+            accept=".mp3,.wav"
+            onChange={handleAudioFileSelect}
+            hidden
+            ref={audioInputRef}
+          />
+          <Button my={4} onClick={() => audioInputRef.current.click()}>Select File</Button>
         </Box>
         <Button m={4} onClick={handleAudioFileUpload}>Upload</Button>
         {audioUploadStatus && <Text m={4}>{audioUploadStatus}</Text>}
       </Box>
 
-      <Box minH={14} rounded="lg" bg="pink.100" width="50%" borderRadius={15} border="1px">
+      <Box minH={14} rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} width="50%" borderRadius={15} border="0px">
         {/* TODO: add transcript file upload handling */}
         <Heading size="md" p={4}>Transcript</Heading>
-        <Box bg="pink.100" p={4}
+        <Box p={4}
           onDrop={handleTranscriptFileDrop}
           onDragOver={handleDragOver}
-          _hover={{ bg: "purple.200" }}
+          onClick={() => transcriptInputRef.current.click()}
+          _hover={{ bg: "whiteAlpha.300" }}
         >
-          {selectedTranscriptFile ? <Text>Selected file: {selectedTranscriptFile.name}</Text> : <Text>Drag and drop a .txt file here, or</Text>}
-          <Input type="file" accept=".txt" onChange={handleTranscriptFileSelect} />
+          {selectedTranscriptFile ? <Text>Selected file: {selectedTranscriptFile.name}</Text> : <Text>Drag and drop a .txt file here</Text>}
+          <Input
+            type="file"
+            accept=".txt"
+            onChange={handleTranscriptFileSelect} 
+            hidden
+            ref={transcriptInputRef}
+            />
+            <Button my={4} onClick={() => transcriptInputRef.current.click()}>Select File</Button>
         </Box>
         <Button m={4} onClick={handleTranscriptFileUpload}>Upload</Button>
         {transcriptUploadStatus && <Text>{transcriptUploadStatus}</Text>}
