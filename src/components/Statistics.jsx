@@ -8,14 +8,7 @@ function Statistics({ speechObject, currentTime }) {
   const [segmentsArr, setSegmentsArr] = useState(null);
   const [currentSegment, setCurrentSegment] = useState(null);
   const [currentTranscription, setCurrentTranscription] = useState(
-    `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam 
-    nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, 
-    sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 
-    Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
-    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor 
-    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam 
-    et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est 
-    Lorem ipsum dolor sit amet.`
+    `Your realtime transcription is displayed here.`
   )
 
   // Binary search function
