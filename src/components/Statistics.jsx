@@ -2,6 +2,7 @@ import React from 'react'
 import { Heading, Box, Flex, TableContainer, Text, Table, TableCaption, Tr, Th, Tbody, Thead, Td } from '@chakra-ui/react'
 import { useColorMode } from '@chakra-ui/color-mode'
 
+// function Statistics({ speechObject }) {
 function Statistics() {
   const { colorMode, toggleColorMode } = useColorMode();
   return (

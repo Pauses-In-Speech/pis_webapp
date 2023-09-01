@@ -1,5 +1,6 @@
 import { Box, Flex, Heading, Image, Text, Button } from '@chakra-ui/react';
 import { useColorMode } from '@chakra-ui/color-mode'
+import { isEqual } from 'lodash';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import RegionsPlugin from 'wavesurfer.js/plugins/regions'
@@ -59,13 +60,14 @@ async function fetchAuditokImage(speechObject, width = 720, height = 80) {
 // WaveSurfer hook
 const useWavesurfer = (containerRef, options) => {
   const [wavesurfer, setWavesurfer] = useState(null)
-  
+
   const [wsRegions, setWsRegions] = useState(null)
-  
+
 
   // Initialize wavesurfer when the container mounts
   // or any of the props change
   useEffect(() => {
+    // console.log("ContainerRef or options have changed! Recreating ws")
     if (!containerRef.current) return
 
     const ws = WaveSurfer.create({
@@ -86,28 +88,38 @@ const useWavesurfer = (containerRef, options) => {
   }, [options, containerRef])
 
   // useEffect(() => {
-  //   if (!containerRef.current) return
+  //   console.log("Options have changed!")
+  // }, [options])
 
-  //   const wsr = ws.registerPlugin(RegionsPlugin.create())
-
-  //   setWsRegions(wsr)
-
-  //   return () => {
-  //     wsr.destroy()
-  //   }
-
-  // }, [options, containerRef])
+  // useEffect(() => {
+  //   console.log("containerRef has changed!")
+  // }, [containerRef])
 
   return [wavesurfer, wsRegions]
 }
 
 // Create a React component that will render wavesurfer.
 // Props are wavesurfer options.
-const WaveSurferPlayer = (props) => {
+// const WaveSurferPlayer = (props) => {
+// const WaveSurferPlayer = ({pauseData, ...props}) => {
+const WaveSurferPlayer = ({ pauseData, currentTime, handleCurrentTime, ...props }) => {
+  console.log(props)
   const containerRef = useRef()
   const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [wavesurfer, wsRegions] = useWavesurfer(containerRef, props)
+
+
+  // Memoize the previous props object
+  const prevPropsRef = useRef(props);
+  let workingProps;
+  if (!isEqual(prevPropsRef.current.url, props.url) || 
+            !isEqual(prevPropsRef.current.minPxPerSec, props.minPxPerSec)) {
+    workingProps = props
+    prevPropsRef.current = props; // Update the previous props
+  } else {
+    workingProps = prevPropsRef.current;
+  }
+
+  const [wavesurfer, wsRegions] = useWavesurfer(containerRef, workingProps)
 
   // On play button click
   const onPlayClick = useCallback(() => {
@@ -119,25 +131,25 @@ const WaveSurferPlayer = (props) => {
   useEffect(() => {
     if (!wavesurfer) return
 
-    setCurrentTime(0)
+    handleCurrentTime(0)
     setIsPlaying(false)
 
     const subscriptions = [
       wavesurfer.on('play', () => setIsPlaying(true)),
       wavesurfer.on('pause', () => setIsPlaying(false)),
-      wavesurfer.on('timeupdate', (currentTime) => setCurrentTime(currentTime)),
+      wavesurfer.on('timeupdate', (myCurrentTime) => handleCurrentTime(myCurrentTime)),
     ]
 
     // create regions for all pauses
-    console.log(props.pauseData.silences)
-    props.pauseData.silences.forEach(element => {
+    console.log(pauseData.silences)
+    pauseData.silences.forEach(element => {
       subscriptions.push(
         wavesurfer.on('decode', () => {
           // Regions
           wsRegions.addRegion({
             start: element.start,
             end: element.end,
-            color: "rgba(70, 233, 30, 0.5)",
+            color: "rgba(70, 233, 30, 0.3)",
             drag: false,
             resize: false,
           })
@@ -164,7 +176,7 @@ const WaveSurferPlayer = (props) => {
 }
 
 
-function Player({ speechObject }) {
+function Player({ speechObject, currentTime, handleCurrentTime }) {
   const { colorMode, toggleColorMode } = useColorMode();
   const [data, setData] = useState(null);
   const [audioData, setAudioData] = useState(null);
@@ -256,6 +268,8 @@ function Player({ speechObject }) {
           <Box style={{ marginTop: 'auto' }} m={4}>
             <WaveSurferPlayer
               pauseData={data}
+              currentTime={currentTime}
+              handleCurrentTime={handleCurrentTime}
               height={100}
               waveColor="#5E5C64"
               progressColor="rgb(255, 136, 0)"
