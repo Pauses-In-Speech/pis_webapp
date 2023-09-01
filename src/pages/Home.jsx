@@ -25,7 +25,7 @@ function Home({speechObject, onSpeechObjectSelect}) {
     <div>
       <AudioUpload onSpeechObjectSelect={onSpeechObjectSelect}/>
       <Player speechObject={speechObject} currentTime={currentTime} handleCurrentTime={handleCurrentTime} />
-      <Statistics speechObject={speechObject} />
+      <Statistics speechObject={speechObject} currentTime={currentTime} />
     </div>
   )
 }
