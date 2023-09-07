@@ -6,6 +6,7 @@ function Statistics({ speechObject, currentTime }) {
   const { colorMode, toggleColorMode } = useColorMode();
 
   const [segmentsArr, setSegmentsArr] = useState(null);
+  const [numericStats, setNumericStats] = useState(null);
   const [currentSegment, setCurrentSegment] = useState(null);
   const [currentTranscription, setCurrentTranscription] = useState(
     `Your realtime transcription is displayed here.`
@@ -77,19 +78,29 @@ function Statistics({ speechObject, currentTime }) {
   }, [currentSegment, segmentsArr, currentTime]);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/speech/${speechObject}`)
-      .then(response => response.json())
-      .then(data => setSegmentsArr(data.transcription.segments))
-      .catch(error => console.error(error));
+    // Load transcription data
+    if (speechObject !== null) {
+      fetch(`http://localhost:8000/speech/${speechObject}`)
+        .then(response => response.json())
+        .then(data => setSegmentsArr(data.transcription.segments))
+        .catch(error => console.error(error));
+    }
+  }, [speechObject]);
+
+  useEffect(() => {
+    // Load statistic data
+    if (speechObject !== null) {
+      fetch(`http://localhost:8000/speech/statistics/${speechObject}`)
+        .then(response => response.json())
+        .then(data => setNumericStats(data))
+        .catch(error => console.error(error));
+    }
   }, [speechObject]);
 
   return (
     <Flex m={4} gap={4}>
       <Box p={4} minH={28} rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} border="0px" w="50%">
         <Heading size="md">Statistics</Heading>
-        {/* <Text>WPM: 73</Text>
-        <Text>Pauses total: 5</Text>
-        <Text>Pauses per min: 8</Text> */}
         <TableContainer minW={400} w="30%">
           <Table variant='striped' colorScheme='yellow'>
             <TableCaption>Audio sequence analysis</TableCaption>
@@ -102,15 +113,19 @@ function Statistics({ speechObject, currentTime }) {
             <Tbody>
               <Tr>
                 <Td>Words per minute</Td>
-                <Td isNumeric>73.4</Td>
+                <Td isNumeric>{numericStats ? numericStats.wpm.toFixed(1) : "-"}</Td>
               </Tr>
               <Tr>
                 <Td>Pauses total</Td>
-                <Td isNumeric>5</Td>
+                <Td isNumeric>{numericStats ? numericStats.pauses : "-"}</Td>
               </Tr>
               <Tr>
                 <Td>Pauses per min</Td>
-                <Td isNumeric>8.3</Td>
+                <Td isNumeric>{numericStats ? numericStats.ppm.toFixed(1) : "-"}</Td>
+              </Tr>
+              <Tr>
+                <Td>Average pause duration (s)</Td>
+                <Td isNumeric>{numericStats ? numericStats.apl.toFixed(1) : "-"}</Td>
               </Tr>
             </Tbody>
           </Table>
@@ -121,7 +136,6 @@ function Statistics({ speechObject, currentTime }) {
         <Text>{currentTranscription}</Text>
       </Box>
     </Flex>
-
   )
 }
 

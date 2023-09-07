@@ -15,5 +15,5 @@ COPY . .
 # RUN npm run build
 CMD ["npm", "start"]
 # docker build ./pis_webapp -t pis_webapp
-# docker run -d -it -–rm -p 3000:3000 -v ${PWD}/:/app/src -–name pis-web pis_webapp:latest /bin/sh
-# docker run -d -it -–rm -p 3000:3000 -v %cd%/src:/app/src -–name pis-web pis_webapp:latest /bin/sh
+# docker run -d -it --rm -p 3000:3000 -v ${PWD}/src/:/app/src --name pis-web pis_webapp:latest /bin/sh
+# docker run -d -it --rm -p 3000:3000 -v %cd%/src:/app/src --name pis-web pis_webapp:latest /bin/sh
