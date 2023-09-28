@@ -10,6 +10,9 @@ function Login() {
   const loginEmailRef = useRef();
   const loginPasswordRef = useRef();
 
+  let [showLoginInfo, setShowLoginInfo] = useState(false);
+  const [displayText, setDisplayText] = useState('Initial Text');
+  
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin")
   }
@@ -36,8 +39,14 @@ function Login() {
       const data = await response.json();
       if (response.status === 400) {
         console.log("Caught 400 status: User already exists (pis).")
+        setShowLoginInfo(true);
+
+        // update logInInfoMessage to reflect the error
+        setDisplayText("User already exists");
+
       } else if (response.ok) {
         console.log("Response for registration was OK");
+        setShowLoginInfo(false);
         changeAuthMode();
       }
       console.log(data)
@@ -65,9 +74,13 @@ function Login() {
       const data = await response.json();
       if (response.status === 400) {
         console.log("Caught 400 status: Wrong username or password (pis).") //TODO: Check error codes and rewrite
+        setShowLoginInfo(true);
+        setDisplayText("Wrong username or password");
+
       } else if (response.ok) {
         console.log("Login was successfull. Token: ", data.access_token);
         // console.log(data);
+        setShowLoginInfo(false);
         navigate("/home");
 
       }
@@ -84,11 +97,11 @@ function Login() {
       <div className="Auth-form-container">
         <form onSubmit={handleLogin} className="Auth-form">
           <div className="Auth-form-content">
-            <h3 className="Auth-form-title">Sign In</h3>
+            <h3 className="Auth-form-title">Login</h3>
             <div className="text-center">
               Not registered yet?{" "}
               <span className="link-primary" onClick={changeAuthMode}>
-                Sign Up
+                Register
               </span>
             </div>
             <div className="form-group mt-3">
@@ -98,6 +111,7 @@ function Login() {
                 className="form-control mt-1"
                 placeholder="Enter email"
                 ref={loginEmailRef}
+                title='Enter a valid email address'
               />
             </div>
             <div className="form-group mt-3">
@@ -119,6 +133,10 @@ function Login() {
             </p>
           </div>
         </form>
+
+        <div>
+          {showLoginInfo && <span><p style={{ color: 'red' }}>Something went wrong: {displayText}</p></span>}
+        </div>
       </div>
     )
   }
@@ -128,11 +146,11 @@ function Login() {
     <div className="Auth-form-container">
       <form onSubmit={handleRegisterAccount} className="Auth-form">
         <div className="Auth-form-content">
-          <h3 className="Auth-form-title">Sign In</h3>
+          <h3 className="Auth-form-title">Register</h3>
           <div className="text-center">
             Already registered?{" "}
             <span className="link-primary" onClick={changeAuthMode}>
-              Sign In
+              Login
             </span>
           </div>
           <div className="form-group mt-3">
@@ -142,6 +160,7 @@ function Login() {
               className="form-control mt-1"
               placeholder="Email Address"
               ref={registerEmailRef}
+              title='Enter a valid email address'
             />
           </div>
           <div className="form-group mt-3">
@@ -163,7 +182,13 @@ function Login() {
           </p>
         </div>
       </form>
+
+      <div>
+          {showLoginInfo && <span><p style={{ color: 'red' }}>Something went wrong: {displayText}</p></span>}
+      </div>
+
     </div>
+
   )
 }
 
