@@ -53,7 +53,8 @@ function Header() {
         justify={["center", "space-between", "flex-end", "flex-end"]}
         direction={["column", "row", "row", "row"]}
         pt={[4, 4, 0, 0]}>
-          <MenuItem to="/">Home</MenuItem>
+          <MenuItem to="/">Login</MenuItem>
+          <MenuItem to="/home">Home</MenuItem>
           <MenuItem to="/library">Speech objects</MenuItem>
           {/* <MenuItem to="/account" isLast>Account</MenuItem> */}
           <MenuItem to="/account">Account</MenuItem>
