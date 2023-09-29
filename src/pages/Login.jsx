@@ -1,7 +1,7 @@
 import { React, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function Login({loginToken, setLoginToken}) {
   const navigate = useNavigate();
   let [authMode, setAuthMode] = useState("signin")
   const registerEmailRef = useRef();
@@ -81,6 +81,7 @@ function Login() {
         console.log("Login was successfull. Token: ", data.access_token);
         // console.log(data);
         setShowLoginInfo(false);
+        setLoginToken(data.access_token);
         navigate("/home");
 
       }

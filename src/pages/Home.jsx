@@ -2,9 +2,10 @@ import AudioUpload from "../components/AudioUpload";
 import Player from "../components/Player";
 import Statistics from "../components/Statistics";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 
-function Home({speechObject, onSpeechObjectSelect}) {
+function Home({ speechObject, onSpeechObjectSelect, loginToken, verifyLoginToken }) {
   // Placeholder speech object
   const placeholderSpeechObject = {
     id: "12345",
@@ -14,20 +15,45 @@ function Home({speechObject, onSpeechObjectSelect}) {
       year: "2023"
     }
   };
-  const [currentTime, setCurrentTime] = useState(0)
 
-    // Function to handle selecting a speechObject
-    const handleCurrentTime = (currentTime) => {
-      setCurrentTime(currentTime);
-    };
+  const navigate = useNavigate();
+  const [currentTime, setCurrentTime] = useState(0)
+  const [isVerified, setIsVerified] = useState(false);
+
+  // Function to handle selecting a speechObject
+  const handleCurrentTime = (currentTime) => {
+    setCurrentTime(currentTime);
+  };
+
+  useEffect(() => {
+    verifyLoginToken(loginToken).then((isVerified) => {
+      setIsVerified(isVerified);
+      if (!isVerified) {
+        console.log("Redirecting - NO LOGIN");
+        navigate("/");
+      } else {
+        console.log("You may stay on page - LOGIN VERIFIED");
+      }
+    });
+  }, [loginToken, navigate, verifyLoginToken]);
+
+  // Render content conditionally based on login verification
+  if (!isVerified) {
+    return null; // Or you can render a loading spinner or message
+  }
 
   return (
     <div>
-      <AudioUpload onSpeechObjectSelect={onSpeechObjectSelect}/>
-      <Player speechObject={speechObject} currentTime={currentTime} handleCurrentTime={handleCurrentTime} />
+      {/* Render your content here */}
+      <AudioUpload onSpeechObjectSelect={onSpeechObjectSelect} loginToken={loginToken} verifyLoginToken={verifyLoginToken} />
+      <Player
+        speechObject={speechObject}
+        currentTime={currentTime}
+        handleCurrentTime={handleCurrentTime}
+      />
       <Statistics speechObject={speechObject} currentTime={currentTime} />
     </div>
-  )
+  );
 }
 
 export default Home;
