@@ -7,6 +7,26 @@ function Library({ onSpeechObjectSelect, loginToken, verifyLoginToken }) {
   const [audioObjects, setAudioObjects] = useState([]);
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Add a loading state
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    fetch(`http://0.0.0.0:8000/users/me`, {
+      headers: {
+        'Authorization': `Bearer ${loginToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Got User id! ' + data.id);
+        setUserId(data.id);
+      })
+      .catch(error => {
+        console.error(error);
+        throw new Error("Can't fetch user id.");
+      });
+  }, [loginToken]);
+  console.log("UserId set to: " + userId )
 
   const navigate = useNavigate();
 
@@ -64,7 +84,6 @@ function Library({ onSpeechObjectSelect, loginToken, verifyLoginToken }) {
     )
   }
   console.log("audioObjects is: ", audioObjects);
-
   console.log("audioObjects.length is: ", audioObjects.length);
 
   return (
@@ -74,7 +93,7 @@ function Library({ onSpeechObjectSelect, loginToken, verifyLoginToken }) {
         {audioObjects.map(audioObject => (
           <SpeechObject
             key={audioObject.file_path}
-            identifier={getIdentifierFromFilePath(audioObject.file_path)}
+            identifier={getIdentifierFromFilePath(audioObject.file_path, userId)}
             onSpeechObjectSelect={onSpeechObjectSelect}
             loginToken={loginToken}
           />
@@ -84,9 +103,10 @@ function Library({ onSpeechObjectSelect, loginToken, verifyLoginToken }) {
   )
 }
 
-function getIdentifierFromFilePath(filePath) {
+function getIdentifierFromFilePath(filePath, userId) {
   const fileName = filePath.split('/').pop();
-  return fileName.replace(/\.[^/.]+$/, '');
+  const fileNameWithUserId = userId + "_" + fileName.replace(/\.[^/.]+$/, '');
+  return fileNameWithUserId;
 }
 
 export default Library;
