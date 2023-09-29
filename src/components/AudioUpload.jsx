@@ -3,7 +3,7 @@ import { Box, Text, Button, Heading, Flex, Input } from '@chakra-ui/react';
 import { useColorMode } from '@chakra-ui/color-mode'
 import { useNavigate } from 'react-router-dom';
 
-function AudioUpload({ onSpeechObjectSelect, loginToken, verifyLoginToken }) {
+function AudioUpload({ onSpeechObjectSelect, loginToken }) {
   if ('REACT_APP_AM_I_IN_A_DOCKER_CONTAINER' in process.env) {
     console.log('It is set!');
     console.log(process.env.REACT_APP_AM_I_IN_A_DOCKER_CONTAINER);
@@ -64,14 +64,14 @@ function AudioUpload({ onSpeechObjectSelect, loginToken, verifyLoginToken }) {
     //   }
     // });
 
-    let isVerified = await verifyLoginToken(loginToken);
-    if (!isVerified) {
-      console.log("Redirecting - NO LOGIN");
-      navigate("/");
-      return;
-    } else {
-      console.log("You may stay on page - LOGIN VERIFIED");
-    }
+    // let isVerified = await verifyLoginToken(loginToken);
+    // if (!isVerified) {
+    //   console.log("Redirecting - NO LOGIN");
+    //   navigate("/");
+    //   return;
+    // } else {
+    //   console.log("You may stay on page - LOGIN VERIFIED");
+    // }
 
     try {
       const response = await fetch('http://0.0.0.0:8000/audio', {
@@ -102,6 +102,9 @@ function AudioUpload({ onSpeechObjectSelect, loginToken, verifyLoginToken }) {
     try {
       const response = await fetch('http://0.0.0.0:8000/audio', { // change the upload link
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${loginToken}`,
+        },
         body: formData,
       });
       const data = await response.json();

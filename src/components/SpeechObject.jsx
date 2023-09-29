@@ -3,7 +3,7 @@ import { useColorMode } from '@chakra-ui/color-mode'
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function SpeechObject({ identifier, onSpeechObjectSelect }) {
+function SpeechObject({ identifier, onSpeechObjectSelect, loginToken }) {
   const navigate = useNavigate();
 
   const { colorMode, toggleColorMode } = useColorMode();
@@ -11,7 +11,13 @@ function SpeechObject({ identifier, onSpeechObjectSelect }) {
   const [speechData, setSpeechData] = useState(null);
   
   useEffect(() => {
-    fetch(`http://localhost:8000/speech/${identifier}`)
+    fetch(`http://localhost:8000/speech/${identifier}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${loginToken}`,
+      },
+    }
+    )
     .then(response => response.json())
     .then(data => setSpeechData(data))
     .catch(error => console.error(error));
@@ -36,6 +42,9 @@ function SpeechObject({ identifier, onSpeechObjectSelect }) {
     // Delete speech object
     fetch(`http://localhost:8000/audio/${identifier}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${loginToken}`,
+      },
     })
       .then(() => {
         // Reload the current page after successful deletion

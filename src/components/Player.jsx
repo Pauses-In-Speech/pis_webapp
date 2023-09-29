@@ -7,9 +7,13 @@ import RegionsPlugin from 'wavesurfer.js/plugins/regions'
 import Timeline from 'wavesurfer.js/plugins/timeline'
 
 
-async function fetchSpeechObjectData(speechObject) {
+async function fetchSpeechObjectData(speechObject, loginToken) {
   try {
-    const response = await fetch(`http://0.0.0.0:8000/speech/${speechObject}`);
+    const response = await fetch(`http://0.0.0.0:8000/speech/${speechObject}`, {
+    headers: {
+      'Authorization': `Bearer ${loginToken}`,
+    },
+    });
     const data = await response.json();
     console.log(data)
     return data;
@@ -19,40 +23,19 @@ async function fetchSpeechObjectData(speechObject) {
   }
 }
 
-async function fetchSpeechObjectAudioData(speechObject) {
+async function fetchSpeechObjectAudioData(speechObject, loginToken) {
   try {
-    const response = await fetch(`http://0.0.0.0:8000/audio/download/${speechObject}`);
+    const response = await fetch(`http://0.0.0.0:8000/audio/download/${speechObject}`, {
+      headers: {
+        'Authorization': `Bearer ${loginToken}`,
+      },
+      });
     const audioData = await response.blob();
     console.log(audioData);
     return audioData;
   } catch (error) {
     console.error(error);
     throw new Error("Can't download speech object.");
-  }
-}
-
-async function fetchPauseImage(speechObject, width = 720, height = 80) {
-
-  try {
-    const response = await fetch(`http://0.0.0.0:8000/speech/pause_image/${speechObject}?width=${width}&height=${height}`);
-    const pauseImageData = await response.blob();
-    console.log(pauseImageData);
-    return pauseImageData;
-  } catch (error) {
-    console.error(error);
-    throw new Error("Can't download pause image png.");
-  }
-}
-
-async function fetchAuditokImage(speechObject, width = 720, height = 80) {
-  try {
-    const response = await fetch(`http://0.0.0.0:8000/speech/auditok_image/${speechObject}?width=${width}&height=${height}`);
-    const auditokImageData = await response.blob();
-    console.log(auditokImageData);
-    return auditokImageData;
-  } catch (error) {
-    console.error(error);
-    throw new Error("Can't download Auditok image png.");
   }
 }
 
@@ -176,7 +159,7 @@ const WaveSurferPlayer = ({ pauseData, currentTime, handleCurrentTime, ...props 
 }
 
 
-function Player({ speechObject, currentTime, handleCurrentTime }) {
+function Player({ speechObject, currentTime, handleCurrentTime, loginToken}) {
   const { colorMode, toggleColorMode } = useColorMode();
   const [data, setData] = useState(null);
   const [audioData, setAudioData] = useState(null);
@@ -187,7 +170,7 @@ function Player({ speechObject, currentTime, handleCurrentTime }) {
   useEffect(() => {
     if (speechObject) {
       // Fetch speech object data
-      fetchSpeechObjectData(speechObject)
+      fetchSpeechObjectData(speechObject, loginToken)
         .then((responseData) => {
           setData(responseData);
         })
@@ -197,7 +180,7 @@ function Player({ speechObject, currentTime, handleCurrentTime }) {
         });
 
       // Download audio data
-      fetchSpeechObjectAudioData(speechObject)
+      fetchSpeechObjectAudioData(speechObject, loginToken)
         .then((responseData) => {
           const audioUrl = URL.createObjectURL(responseData);
           setAudioData(audioUrl);
@@ -260,7 +243,7 @@ function Player({ speechObject, currentTime, handleCurrentTime }) {
         </Heading>
         <Flex direction="column">
           <Text ml={4} fontSize="lg" isTruncated>
-            {data.id}
+            {data.id.substring(data.id.indexOf('_')+1)}
           </Text>
           <Text ml={4} as="i">
             {`${data.upload_date.day}/${data.upload_date.month}/${data.upload_date.year}`}

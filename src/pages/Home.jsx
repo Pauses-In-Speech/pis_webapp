@@ -50,8 +50,9 @@ function Home({ speechObject, onSpeechObjectSelect, loginToken, verifyLoginToken
         speechObject={speechObject}
         currentTime={currentTime}
         handleCurrentTime={handleCurrentTime}
+        loginToken={loginToken}
       />
-      <Statistics speechObject={speechObject} currentTime={currentTime} />
+      <Statistics speechObject={speechObject} currentTime={currentTime} loginToken={loginToken} />
     </div>
   );
 }

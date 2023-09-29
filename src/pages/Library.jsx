@@ -76,6 +76,7 @@ function Library({ onSpeechObjectSelect, loginToken, verifyLoginToken }) {
             key={audioObject.file_path}
             identifier={getIdentifierFromFilePath(audioObject.file_path)}
             onSpeechObjectSelect={onSpeechObjectSelect}
+            loginToken={loginToken}
           />
         ))}
       </HStack>

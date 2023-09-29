@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Heading, Box, Flex, TableContainer, Text, Table, TableCaption, Tr, Th, Tbody, Thead, Td } from '@chakra-ui/react'
 import { useColorMode } from '@chakra-ui/color-mode'
 
-function Statistics({ speechObject, currentTime }) {
+function Statistics({ speechObject, currentTime, loginToken }) {
   const { colorMode, toggleColorMode } = useColorMode();
 
   const [segmentsArr, setSegmentsArr] = useState(null);
@@ -80,7 +80,11 @@ function Statistics({ speechObject, currentTime }) {
   useEffect(() => {
     // Load transcription data
     if (speechObject !== null) {
-      fetch(`http://localhost:8000/speech/${speechObject}`)
+      fetch(`http://localhost:8000/speech/${speechObject}`, {
+        headers: {
+          'Authorization': `Bearer ${loginToken}`,
+        },
+        })
         .then(response => response.json())
         .then(data => setSegmentsArr(data.transcription.segments))
         .catch(error => console.error(error));
@@ -90,7 +94,11 @@ function Statistics({ speechObject, currentTime }) {
   useEffect(() => {
     // Load statistic data
     if (speechObject !== null) {
-      fetch(`http://localhost:8000/speech/statistics/${speechObject}`)
+      fetch(`http://localhost:8000/speech/statistics/${speechObject}`, {
+        headers: {
+          'Authorization': `Bearer ${loginToken}`,
+        },
+        })
         .then(response => response.json())
         .then(data => setNumericStats(data))
         .catch(error => console.error(error));
