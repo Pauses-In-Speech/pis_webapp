@@ -31,7 +31,7 @@ function SpeechObject({ identifier, onSpeechObjectSelect, loginToken }) {
 
   const handleSelect = (identifier) => {
     onSpeechObjectSelect(identifier);
-    navigate("/");
+    navigate("/home");
   }
 
   // Function to handle deleting a speechObject
