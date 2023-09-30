@@ -100,7 +100,8 @@ function AudioUpload({ onSpeechObjectSelect, loginToken }) {
     formData.append('file', selectedTranscriptFile);
 
     try {
-      const response = await fetch('http://0.0.0.0:8000/audio', { // change the upload link
+      // Get currently selected speechID here
+      const response = await fetch(`http://0.0.0.0:8000/speech/transcript/?speech_id=${selectedAudioFile.audioId}`, { // use audioId instead of data.audio_id
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${loginToken}`,
