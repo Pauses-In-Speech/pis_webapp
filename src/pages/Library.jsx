@@ -105,8 +105,7 @@ function Library({ onSpeechObjectSelect, loginToken, verifyLoginToken }) {
 
 function getIdentifierFromFilePath(filePath, userId) {
   const fileName = filePath.split('/').pop();
-  const fileNameWithUserId = userId + "_" + fileName.replace(/\.[^/.]+$/, '');
-  return fileNameWithUserId;
+  return fileName.replace(/\.[^/.]+$/, '');
 }
 
 export default Library;
