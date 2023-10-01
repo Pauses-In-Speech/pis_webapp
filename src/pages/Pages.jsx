@@ -8,7 +8,11 @@ import { Route, Routes, useLocation, } from 'react-router-dom';
 function Pages() {
   const location = useLocation();
   const [selectedSpeechObject, setSelectedSpeechObject] = useState(null);
-  const [loginToken, setLoginToken] = useState(null);
+
+  var userLoginToken = localStorage.getItem('userLoginToken');
+  const setUserLoginToken = (token) => {
+    localStorage.setItem('userLoginToken', token);
+  };
 
   // Function to handle selecting a speechObject
   const handleSpeechObjectSelect = (speechObject) => {
@@ -43,9 +47,9 @@ function Pages() {
   // TODO write a redirectIfBadToken function and pass to every route except "/"
   return (
     <Routes location={location} key={location.pathname}>
-      <Route path='/' element={<Login loginToken={loginToken} setLoginToken={setLoginToken} />} />
-      <Route path='/home' element={<Home speechObject={selectedSpeechObject} onSpeechObjectSelect={handleSpeechObjectSelect} loginToken={loginToken} verifyLoginToken={verifyLoginToken} />} />
-      <Route path='/library' element={<Library onSpeechObjectSelect={handleSpeechObjectSelect} loginToken={loginToken} verifyLoginToken={verifyLoginToken} />} />
+      <Route path='/' element={<Login loginToken={userLoginToken} setLoginToken={setUserLoginToken} />} />
+      <Route path='/home' element={<Home speechObject={selectedSpeechObject} onSpeechObjectSelect={handleSpeechObjectSelect} loginToken={userLoginToken} verifyLoginToken={verifyLoginToken} />} />
+      <Route path='/library' element={<Library onSpeechObjectSelect={handleSpeechObjectSelect} loginToken={userLoginToken} verifyLoginToken={verifyLoginToken} />} />
       <Route path='/account' element={<Account />} />
     </Routes>
   )
