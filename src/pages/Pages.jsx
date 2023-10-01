@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import Home from './Home'
 import Library from './Library'
-import Account from './Account';
 import Login from './Login';
 import { Route, Routes, useLocation, } from 'react-router-dom';
 
@@ -50,7 +49,6 @@ function Pages() {
       <Route path='/' element={<Login loginToken={userLoginToken} setLoginToken={setUserLoginToken} />} />
       <Route path='/home' element={<Home speechObject={selectedSpeechObject} onSpeechObjectSelect={handleSpeechObjectSelect} loginToken={userLoginToken} verifyLoginToken={verifyLoginToken} />} />
       <Route path='/library' element={<Library onSpeechObjectSelect={handleSpeechObjectSelect} loginToken={userLoginToken} verifyLoginToken={verifyLoginToken} />} />
-      <Route path='/account' element={<Account />} />
     </Routes>
   )
 }

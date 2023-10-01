@@ -1,8 +1,14 @@
 import { React, useState, useRef } from 'react'
+import { Heading, Box, Stack, Button, FormControl, FormErrorMessage, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
+import { useColorMode } from '@chakra-ui/color-mode'
 import { useNavigate } from 'react-router-dom';
+import { LockIcon, EmailIcon } from '@chakra-ui/icons'
 
-function Login({loginToken, setLoginToken}) {
+function Login({ loginToken, setLoginToken }) {
   const navigate = useNavigate();
+
+  const { colorMode, toggleColorMode } = useColorMode();
+
   let [authMode, setAuthMode] = useState("signin")
   const registerEmailRef = useRef();
   const registerPasswordRef = useRef();
@@ -12,9 +18,10 @@ function Login({loginToken, setLoginToken}) {
 
   let [showLoginInfo, setShowLoginInfo] = useState(false);
   const [displayText, setDisplayText] = useState('Initial Text');
-  
+
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin")
+    setShowLoginInfo(false)
   }
 
   const handleRegisterAccount = async (e) => {
@@ -95,100 +102,103 @@ function Login({loginToken, setLoginToken}) {
   if (authMode === "signin") {
     // Log in to account
     return (
-      <div className="Auth-form-container">
-        <form onSubmit={handleLogin} className="Auth-form">
-          <div className="Auth-form-content">
-            <h3 className="Auth-form-title">Login</h3>
-            <div className="text-center">
-              Not registered yet?{" "}
-              <span className="link-primary" onClick={changeAuthMode}>
-                Register
-              </span>
-            </div>
-            <div className="form-group mt-3">
-              <label>Email address</label>
-              <input
-                type="email"
-                className="form-control mt-1"
-                placeholder="Enter email"
-                ref={loginEmailRef}
-                title='Enter a valid email address'
-              />
-            </div>
-            <div className="form-group mt-3">
-              <label>Password</label>
-              <input
-                type="password"
-                className="form-control mt-1"
-                placeholder="Enter password"
-                ref={loginPasswordRef}
-              />
-            </div>
-            <div className="d-grid gap-2 mt-3">
-              <button type="submit" className="btn btn-primary">
-                Submit
-              </button>
-            </div>
-            <p className="text-center mt-2">
-              Forgot <a href="#">password?</a>
-            </p>
-          </div>
-        </form>
-
-        <div>
-          {showLoginInfo && <span><p style={{ color: 'red' }}>Something went wrong: {displayText}</p></span>}
-        </div>
-      </div>
+      <Box m={4}>
+        <Heading p={4} size="md">Login</Heading>
+        <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} maxW="20%" p={4}>
+          <Stack direction='row' align='center' justify={'space-between'} pb={4}>
+            <Heading size="sm">Not registered yet?</Heading>
+            <Button onClick={changeAuthMode} size='sm' variant='link'>Register</Button>
+          </Stack>
+          <form onSubmit={handleLogin}>
+            <Stack spacing={4}>
+              <FormControl isInvalid={showLoginInfo}>
+                <InputGroup>
+                  <InputLeftElement
+                    pointerEvents="none"
+                    children={<EmailIcon />}
+                  />
+                  <Input
+                    type="email"
+                    placeholder="Email address"
+                    ref={loginEmailRef}
+                    title='Enter a valid email address'
+                  />
+                </InputGroup>
+              </FormControl>
+              <FormControl isInvalid={showLoginInfo}>
+                <InputGroup>
+                  <InputLeftElement
+                    pointerEvents="none"
+                    children={<LockIcon />}
+                  />
+                  <Input
+                    type="password"
+                    placeholder="Password"
+                    ref={loginPasswordRef}
+                  />
+                </InputGroup>
+                {showLoginInfo && <FormErrorMessage>Something went wrong: {displayText}</FormErrorMessage>}
+              </FormControl>
+              <Box>
+                <Button type="submit">
+                  Submit
+                </Button>
+              </Box>
+            </Stack>
+          </form>
+        </Box>
+      </Box>
     )
   }
 
   // Register new account
   return (
-    <div className="Auth-form-container">
-      <form onSubmit={handleRegisterAccount} className="Auth-form">
-        <div className="Auth-form-content">
-          <h3 className="Auth-form-title">Register</h3>
-          <div className="text-center">
-            Already registered?{" "}
-            <span className="link-primary" onClick={changeAuthMode}>
-              Login
-            </span>
-          </div>
-          <div className="form-group mt-3">
-            <label>Email address</label>
-            <input
-              type="email"
-              className="form-control mt-1"
-              placeholder="Email Address"
-              ref={registerEmailRef}
-              title='Enter a valid email address'
-            />
-          </div>
-          <div className="form-group mt-3">
-            <label>Password</label>
-            <input
-              type="password"
-              className="form-control mt-1"
-              placeholder="Password"
-              ref={registerPasswordRef}
-            />
-          </div>
-          <div className="d-grid gap-2 mt-3">
-            <button type="submit" className="btn btn-primary">
-              Submit
-            </button>
-          </div>
-          <p className="text-center mt-2">
-            Forgot <a href="#">password?</a>
-          </p>
-        </div>
-      </form>
-
-      <div>
-          {showLoginInfo && <span><p style={{ color: 'red' }}>Something went wrong: {displayText}</p></span>}
-      </div>
-
-    </div>
+    <Box m={4}>
+      <Heading p={4} size="md">Register</Heading>
+      <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} maxW="20%" p={4}>
+        <Stack direction='row' align='center' justify={'space-between'} pb={4}>
+          <Heading size="sm">Already registered?</Heading>
+          <Button onClick={changeAuthMode} size='sm' variant='link'>Login</Button>
+        </Stack>
+        <form onSubmit={handleRegisterAccount}>
+          <Stack spacing={4}>
+            <FormControl isInvalid={showLoginInfo}>
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents="none"
+                  children={<EmailIcon />}
+                />
+                <Input
+                  type="email"
+                  placeholder="Email address"
+                  ref={registerEmailRef}
+                  title='Enter a valid email address'
+                />
+              </InputGroup>
+            </FormControl>
+            <FormControl isInvalid={showLoginInfo}>
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents="none"
+                  children={<LockIcon />}
+                />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  ref={registerPasswordRef}
+                />
+              </InputGroup>
+              {showLoginInfo && <FormErrorMessage>Something went wrong: {displayText}</FormErrorMessage>}
+            </FormControl>
+            <Box>
+              <Button type="submit">
+                Submit
+              </Button>
+            </Box>
+          </Stack>
+        </form>
+      </Box>
+    </Box>
 
   )
 }
