@@ -1,5 +1,5 @@
 import { React, useState, useRef } from 'react'
-import { Heading, Box, Stack, Button, FormControl, FormErrorMessage, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
+import { Heading, Box, Stack, Button, FormControl, FormErrorMessage, Input, InputGroup, InputLeftElement, Center } from '@chakra-ui/react'
 import { useColorMode } from '@chakra-ui/color-mode'
 import { useNavigate } from 'react-router-dom';
 import { LockIcon, EmailIcon } from '@chakra-ui/icons'
@@ -102,7 +102,7 @@ function Login({ loginToken, setLoginToken }) {
   if (authMode === "signin") {
     // Log in to account
     return (
-      <Box m={4}>
+      <Box m={4} align="center">
         <Heading p={4} size="md">Login</Heading>
         <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} maxW="20%" p={4}>
           <Stack direction='row' align='center' justify={'space-between'} pb={4}>
@@ -153,7 +153,7 @@ function Login({ loginToken, setLoginToken }) {
 
   // Register new account
   return (
-    <Box m={4}>
+    <Box m={4} align="center">
       <Heading p={4} size="md">Register</Heading>
       <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} maxW="20%" p={4}>
         <Stack direction='row' align='center' justify={'space-between'} pb={4}>
