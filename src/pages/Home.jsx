@@ -19,6 +19,10 @@ function Home({ speechObject, onSpeechObjectSelect, loginToken, verifyLoginToken
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(0)
   const [isVerified, setIsVerified] = useState(false);
+  let [newTranscription, setNewTranscription] = useState("no");
+  const toggleTranscription = () => {
+    setNewTranscription(newTranscription === "no" ? "yes" : "no");
+  }
 
   // Function to handle selecting a speechObject
   const handleCurrentTime = (currentTime) => {
@@ -45,14 +49,14 @@ function Home({ speechObject, onSpeechObjectSelect, loginToken, verifyLoginToken
   return (
     <div>
       {/* Render your content here */}
-      <AudioUpload onSpeechObjectSelect={onSpeechObjectSelect} loginToken={loginToken} verifyLoginToken={verifyLoginToken} />
+      <AudioUpload onSpeechObjectSelect={onSpeechObjectSelect} loginToken={loginToken} speechObject={speechObject} toggleTranscription={toggleTranscription}/>
       <Player
         speechObject={speechObject}
         currentTime={currentTime}
         handleCurrentTime={handleCurrentTime}
         loginToken={loginToken}
       />
-      <Statistics speechObject={speechObject} currentTime={currentTime} loginToken={loginToken} />
+      <Statistics speechObject={speechObject} currentTime={currentTime} loginToken={loginToken} newTranscription={newTranscription}/>
     </div>
   );
 }

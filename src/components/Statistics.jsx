@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Heading, Box, Flex, TableContainer, Text, Table, TableCaption, Tr, Th, Tbody, Thead, Td } from '@chakra-ui/react'
 import { useColorMode } from '@chakra-ui/color-mode'
 
-function Statistics({ speechObject, currentTime, loginToken }) {
+function Statistics({ speechObject, currentTime, loginToken, newTranscription }) {
   const { colorMode, toggleColorMode } = useColorMode();
 
   const [segmentsArr, setSegmentsArr] = useState(null);
@@ -89,7 +89,7 @@ function Statistics({ speechObject, currentTime, loginToken }) {
         .then(data => setSegmentsArr(data.transcription.segments))
         .catch(error => console.error(error));
     }
-  }, [speechObject]);
+  }, [speechObject, newTranscription]);
 
   useEffect(() => {
     // Load statistic data

@@ -3,7 +3,7 @@ import { Box, Text, Button, Heading, Flex, Input } from '@chakra-ui/react';
 import { useColorMode } from '@chakra-ui/color-mode'
 import { useNavigate } from 'react-router-dom';
 
-function AudioUpload({ onSpeechObjectSelect, loginToken }) {
+function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTranscription}) {
   if ('REACT_APP_AM_I_IN_A_DOCKER_CONTAINER' in process.env) {
     console.log('It is set!');
     console.log(process.env.REACT_APP_AM_I_IN_A_DOCKER_CONTAINER);
@@ -101,7 +101,7 @@ function AudioUpload({ onSpeechObjectSelect, loginToken }) {
 
     try {
       // Get currently selected speechID here
-      const response = await fetch(`http://0.0.0.0:8000/speech/transcript/?speech_id=${selectedAudioFile.audioId}`, { // use audioId instead of data.audio_id
+      const response = await fetch(`http://0.0.0.0:8000/speech/transcript/?speech_id=${speechObject}`, { // use audioId instead of data.audio_id
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${loginToken}`,
@@ -109,8 +109,9 @@ function AudioUpload({ onSpeechObjectSelect, loginToken }) {
         body: formData,
       });
       const data = await response.json();
-      setTranscriptUploadStatus(`File uploaded at: ${data.audio_id}`);
-      onSpeechObjectSelect(data.audio_id); // TODO: remove this line
+      setTranscriptUploadStatus(`Transcript updated for uploaded at: ${speechObject}`);
+      // navigate("/home");
+      toggleTranscription();
     } catch (error) {
       setTranscriptUploadStatus('Upload failed');
     }
