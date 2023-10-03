@@ -107,7 +107,7 @@ function Statistics({ speechObject, currentTime, loginToken, newTranscription })
 
   return (
     <Flex m={4} gap={4}>
-      <Box p={4} minH={28} rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} border="0px" w="50%">
+      <Box p={4} minH={28} minW={432} rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} border="0px" w="50%">
         <Heading size="md">Statistics</Heading>
         <TableContainer minW={400} w="30%">
           <Table variant='striped' colorScheme='yellow'>
