@@ -79,7 +79,7 @@ function Library({ onSpeechObjectSelect, loginToken, verifyLoginToken }) {
     return (
       <Box m={4}>
         <Heading p={4} size="md">Library</Heading>
-        <Text>There are no speech objects in your library yet.</Text>
+        <Text p={4}>There are no speech objects in your library yet.</Text>
       </Box>
     )
   }

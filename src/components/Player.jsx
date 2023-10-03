@@ -216,15 +216,15 @@ function Player({ speechObject, currentTime, handleCurrentTime, loginToken}) {
 
 
   if (!speechObject) {
-    return <Box m={4}>No speechObject selected</Box>;
+    return <Box m={4} p={4}>No speech object selected</Box>;
   }
 
   if (!data) {
-    return <Box m={4}>Fetching...</Box>;
+    return <Box m={4} p={4}>Fetching...</Box>;
   }
 
   if (!audioData) {
-    return <Box m={4}>Downloading...</Box>
+    return <Box m={4} p={4}>Downloading...</Box>
   }
 
   // if (!auditokImageData) {

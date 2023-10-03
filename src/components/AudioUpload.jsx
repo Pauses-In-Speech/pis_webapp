@@ -142,7 +142,7 @@ function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTra
           <Button my={4} onClick={() => audioInputRef.current.click()}>Select File</Button>
         </Box>
         <Button m={4} onClick={handleAudioFileUpload}>Upload</Button>
-        {audioUploadStatus && <Text m={4}>{audioUploadStatus}</Text>}
+        {audioUploadStatus ? <Text m={4}>{audioUploadStatus}</Text> : <Text m={4} style={{ color: 'transparent' }}>-</Text>}
       </Box>
 
       {speechObject !== null ? (
