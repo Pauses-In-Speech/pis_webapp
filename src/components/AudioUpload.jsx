@@ -3,7 +3,7 @@ import { Box, Text, Button, Heading, Flex, Input } from '@chakra-ui/react';
 import { useColorMode } from '@chakra-ui/color-mode'
 import { useNavigate } from 'react-router-dom';
 
-function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTranscription}) {
+function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTranscription }) {
   if ('REACT_APP_AM_I_IN_A_DOCKER_CONTAINER' in process.env) {
     console.log('It is set!');
     console.log(process.env.REACT_APP_AM_I_IN_A_DOCKER_CONTAINER);
@@ -145,28 +145,32 @@ function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTra
         {audioUploadStatus && <Text m={4}>{audioUploadStatus}</Text>}
       </Box>
 
-      <Box minH={14} rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} width="50%" borderRadius={15} border="0px">
-        {/* TODO: add transcript file upload handling */}
-        <Heading size="md" p={4}>Transcript</Heading>
-        <Box p={4}
-          onDrop={handleTranscriptFileDrop}
-          onDragOver={handleDragOver}
-          onClick={() => transcriptInputRef.current.click()}
-          _hover={{ bg: "whiteAlpha.300" }}
-        >
-          {selectedTranscriptFile ? <Text>Selected file: {selectedTranscriptFile.name}</Text> : <Text>Drag and drop a .txt file here</Text>}
-          <Input
-            type="file"
-            accept=".txt"
-            onChange={handleTranscriptFileSelect}
-            hidden
-            ref={transcriptInputRef}
-          />
-          <Button my={4} onClick={() => transcriptInputRef.current.click()}>Select File</Button>
+      {speechObject !== null ? (
+        <Box minH={14} rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} width="50%" borderRadius={15} border="0px">
+          {/* TODO: add transcript file upload handling */}
+          <Heading size="md" p={4}>Transcript</Heading>
+          <Box p={4}
+            onDrop={handleTranscriptFileDrop}
+            onDragOver={handleDragOver}
+            onClick={() => transcriptInputRef.current.click()}
+            _hover={{ bg: "whiteAlpha.300" }}
+          >
+            {selectedTranscriptFile ? <Text>Selected file: {selectedTranscriptFile.name}</Text> : <Text>Drag and drop a .txt file here</Text>}
+            <Input
+              type="file"
+              accept=".txt"
+              onChange={handleTranscriptFileSelect}
+              hidden
+              ref={transcriptInputRef}
+            />
+            <Button my={4} onClick={() => transcriptInputRef.current.click()}>Select File</Button>
+          </Box>
+          <Button m={4} onClick={handleTranscriptFileUpload}>Upload</Button>
+          {transcriptUploadStatus && <Text>{transcriptUploadStatus}</Text>}
         </Box>
-        <Button m={4} onClick={handleTranscriptFileUpload}>Upload</Button>
-        {transcriptUploadStatus && <Text>{transcriptUploadStatus}</Text>}
-      </Box>
+      ) : (
+        <Box minH={14} width="50%"></Box>
+      )}
     </Flex>
   );
 };
