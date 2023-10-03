@@ -54,7 +54,7 @@ function SpeechObject({ identifier, onSpeechObjectSelect, loginToken }) {
   };
 
   return (
-    <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} maxW="20%" p={4}>
+    <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} minW="16rem" maxW="20%" p={4}>
       <Heading size="sm">{identifier}</Heading>
       <Text pt={2}>{transcription.text.slice(0, 160)}...</Text>
       <Text pt={1} fontStyle="italic">{`${upload_date.day}/${upload_date.month}/${upload_date.year}`}</Text>

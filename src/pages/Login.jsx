@@ -104,7 +104,7 @@ function Login({ loginToken, setLoginToken }) {
     return (
       <Box m={4} align="center">
         <Heading p={4} size="md">Login</Heading>
-        <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} maxW="20%" p={4}>
+        <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} minW="16rem" maxW="20%" p={4}>
           <Stack direction='row' align='center' justify={'space-between'} pb={4}>
             <Heading size="sm">Not registered yet?</Heading>
             <Button onClick={changeAuthMode} size='sm' variant='link'>Register</Button>
@@ -155,7 +155,7 @@ function Login({ loginToken, setLoginToken }) {
   return (
     <Box m={4} align="center">
       <Heading p={4} size="md">Register</Heading>
-      <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} maxW="20%" p={4}>
+      <Box border="0px" rounded="lg" bg={colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.500"} minW="16rem" maxW="20%" p={4}>
         <Stack direction='row' align='center' justify={'space-between'} pb={4}>
           <Heading size="sm">Already registered?</Heading>
           <Button onClick={changeAuthMode} size='sm' variant='link'>Login</Button>
