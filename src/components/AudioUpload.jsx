@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { Box, Text, Button, Heading, Flex, Input } from '@chakra-ui/react';
+import { Box, Text, Button, Heading, Flex, Input, Progress, HStack } from '@chakra-ui/react';
 import { useColorMode } from '@chakra-ui/color-mode'
 import { useNavigate } from 'react-router-dom';
+import FakeProgress from 'fake-progress';
 
 function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTranscription }) {
   if ('REACT_APP_AM_I_IN_A_DOCKER_CONTAINER' in process.env) {
@@ -15,12 +16,16 @@ function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTra
   const [transcriptUploadStatus, setTranscriptUploadStatus] = useState('');
   const [selectedAudioFile, setSelectedAudioFile] = useState(null);
   const [selectedTranscriptFile, setSelectedTranscriptFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Initialize as false
+  const [progression, setProgression] = useState(0);
   const navigate = useNavigate();
 
   const audioInputRef = useRef();
   const transcriptInputRef = useRef();
   const { colorMode, toggleColorMode } = useColorMode();
+
+  var progr = new FakeProgress({
+    timeConstant: 30000,
+  })
 
   const handleAudioFileSelect = (e) => {
     const file = e.target.files[0];
@@ -45,13 +50,20 @@ function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTra
   };
 
   const handleAudioFileUpload = async () => {
-    setIsLoading(true); // Set isLoading to true before making the fetch request
     if (!selectedAudioFile) {
       setAudioUploadStatus('No file selected');
       return;
     }
+    const updateProgress = () => {
+      console.log("Updating progress bar to " + (progr.progress * 100).toFixed(1) + ' %')
+      setProgression(progr.progress * 100);
+    };
 
-    setAudioUploadStatus('Uploading...');
+    let intervalId;
+    intervalId = setInterval(updateProgress, 200); // Update every 1000ms (1 second)
+    progr.start();
+
+    setAudioUploadStatus('Processing...');
     const formData = new FormData();
     formData.append('file', selectedAudioFile);
 
@@ -87,6 +99,11 @@ function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTra
     } catch (error) {
       setAudioUploadStatus('Upload failed');
     }
+    progr.end()
+    setTimeout(() => {
+      console.log("clearing interval")
+      clearInterval(intervalId);
+    }, 1000)
   };
 
   const handleTranscriptFileUpload = async () => {
@@ -141,8 +158,23 @@ function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTra
           />
           <Button my={4} onClick={() => audioInputRef.current.click()}>Select File</Button>
         </Box>
-        <Button m={4} onClick={handleAudioFileUpload}>Upload</Button>
-        {audioUploadStatus ? <Text m={4}>{audioUploadStatus}</Text> : <Text m={4} style={{ color: 'transparent' }}>-</Text>}
+        <HStack m={4} spacing={4} w="100%">
+          <Button onClick={handleAudioFileUpload}>Upload</Button>
+          {audioUploadStatus ? <Text>{audioUploadStatus}</Text> : <Text style={{ color: 'transparent' }}>-</Text>}
+        </HStack>
+        <Box marginX={4} marginBottom={4} rounded="lg" borderRadius={10} border="1px">
+          {/* This progress right here does not update its value. Progression seems to be never updated. This needs fixing */}
+          <Progress
+            m={2}
+            hasStripe
+            value={progression}
+            sx={{
+              "& > div:first-child": {
+                transitionProperty: "width",
+              },
+            }}
+          />
+        </Box>
       </Box>
 
       {speechObject !== null ? (
