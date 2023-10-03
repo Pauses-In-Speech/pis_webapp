@@ -197,8 +197,10 @@ function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTra
             />
             <Button my={4} onClick={() => transcriptInputRef.current.click()}>Select File</Button>
           </Box>
-          <Button m={4} onClick={handleTranscriptFileUpload}>Upload</Button>
-          {transcriptUploadStatus && <Text>{transcriptUploadStatus}</Text>}
+          <HStack m={4} spacing={4} w="100%">
+          <Button onClick={handleTranscriptFileUpload}>Upload</Button>
+          {transcriptUploadStatus ? <Text>{transcriptUploadStatus}</Text> : <Text style={{ color: 'transparent' }}>-</Text>}
+          </HStack>
         </Box>
       ) : (
         <Box minH={14} width="50%"></Box>
