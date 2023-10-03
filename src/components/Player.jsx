@@ -153,7 +153,7 @@ const WaveSurferPlayer = ({ pauseData, currentTime, handleCurrentTime, ...props 
         {isPlaying ? 'Pause' : 'Play'}
       </Button>
 
-      <p>Seconds played: {currentTime}</p>
+      <p>Seconds played: {currentTime.toFixed(1)}</p>
     </>
   )
 }
