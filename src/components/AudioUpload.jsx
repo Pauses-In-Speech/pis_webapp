@@ -24,7 +24,7 @@ function AudioUpload({ onSpeechObjectSelect, loginToken, speechObject, toggleTra
   const { colorMode, toggleColorMode } = useColorMode();
 
   var progr = new FakeProgress({
-    timeConstant: 30000,
+    timeConstant: 15000,
   })
 
   const handleAudioFileSelect = (e) => {
